@@ -1,24 +1,26 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
-import ImageGallery from './components/ImageGallery/ImageGallery';
-import SearchBar from './components/SearchBar/SearchBar';
-import { fetchArticlesWithTopic } from './Serwis-api/Serwis-api';
-import ErrorMessage from './components/ErrorMessage/ErrorMessage';
-import LoadMoreBtn from './components/LoadMoreBtn/LoadMoreBtn';
-import Message from './components/Message/Message';
-import Loader from './components/Loader/Loader';
-import ImageModal from './components/ImageModal/ImageModal';
+import ImageGallery from '../ImageGallery/ImageGallery';
+import SearchBar from '../SearchBar/SearchBar';
+import { fetchArticlesWithTopic } from '../../Serwis-api/Serwis-api';
+import ErrorMessage from '../ErrorMessage/ErrorMessage';
+import LoadMoreBtn from '../LoadMoreBtn/LoadMoreBtn';
+import Message from '../Message/Message';
+import Loader from '../Loader/Loader';
+import ImageModal from '../ImageModal/ImageModal';
 
 export default function App() {
-  const [photoCollections, setPhotoCollections] = useState([]);
-  const [isLoading, setLoading] = useState(false);
-  const [isError, setIsError] = useState(false);
-  const [topic, setTopic] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0);
-  const [message, setMessage] = useState(null);
-  const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [modalSrc, setModalSrc] = useState(null);
-  const [modalDesc, setModalDesc] = useState('');
+  const [photoCollections, setPhotoCollections] = useState<PhotoCollection[]>(
+    [],
+  );
+  const [isLoading, setLoading] = useState<boolean>(false);
+  const [isError, setIsError] = useState<boolean>(false);
+  const [topic, setTopic] = useState<string>('');
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalPages, setTotalPages] = useState<number>(0);
+  const [message, setMessage] = useState<string | null>(null);
+  const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
+  const [modalSrc, setModalSrc] = useState<string | null>(null);
+  const [modalDesc, setModalDesc] = useState<string>('');
 
   const itemRefs = useRef([]);
 
@@ -31,6 +33,7 @@ export default function App() {
 
   const scrollToElement = useCallback(() => {
     setTimeout(() => {
+      0;
       if (!itemRefs.current.length || currentPage >= totalPages) return;
 
       const firstNewIndex = itemRefs.current.length - 2;
@@ -58,6 +61,8 @@ export default function App() {
         setIsError(false);
         setLoading(true);
         const data = await fetchArticlesWithTopic(topic, currentPage);
+        console.log(data);
+
         setPhotoCollections((prevPhotoCollections) => [
           ...prevPhotoCollections,
           ...data.results,
