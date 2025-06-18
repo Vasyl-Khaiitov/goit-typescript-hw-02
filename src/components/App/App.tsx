@@ -7,6 +7,7 @@ import LoadMoreBtn from '../LoadMoreBtn/LoadMoreBtn';
 import Message from '../Message/Message';
 import Loader from '../Loader/Loader';
 import ImageModal from '../ImageModal/ImageModal';
+import { HandleSearchProps, PhotoCollection } from './App.types';
 
 export default function App() {
   const [photoCollections, setPhotoCollections] = useState<PhotoCollection[]>(
@@ -22,16 +23,18 @@ export default function App() {
   const [modalSrc, setModalSrc] = useState<string | null>(null);
   const [modalDesc, setModalDesc] = useState<string>('');
 
-  const itemRefs = useRef([]);
+  const itemRefs = useRef<HTMLElement[]>([]);
 
-  const handleSearch = async (newTopic) => {
+  const handleSearch = async ({
+    newTopic,
+  }: HandleSearchProps): Promise<void> => {
     setTopic(newTopic);
     setCurrentPage(1);
     setPhotoCollections([]);
     setMessage(null);
   };
 
-  const scrollToElement = useCallback(() => {
+  const scrollToElement = useCallback((): void => {
     setTimeout(() => {
       0;
       if (!itemRefs.current.length || currentPage >= totalPages) return;
@@ -46,7 +49,7 @@ export default function App() {
     }, 1500);
   }, [currentPage, totalPages]);
 
-  const incrementPage = () => {
+  const incrementPage = (): void => {
     setLoading(true);
     setCurrentPage((prev) => prev + 1);
   };
@@ -56,18 +59,23 @@ export default function App() {
       return;
     }
 
-    async function fetchData() {
+    async function fetchData(): Promise<void> {
       try {
         setIsError(false);
         setLoading(true);
         const data = await fetchArticlesWithTopic(topic, currentPage);
         console.log(data);
+        const typeData = data as {
+          total?: number;
+          total_pages: number;
+          results: PhotoCollection[];
+        };
 
         setPhotoCollections((prevPhotoCollections) => [
           ...prevPhotoCollections,
-          ...data.results,
+          ...typeData.results,
         ]);
-        setTotalPages(data.total_pages);
+        setTotalPages(typeData.total_pages);
       } catch {
         setIsError(true);
       } finally {
@@ -84,13 +92,13 @@ export default function App() {
     }
   }, [currentPage, totalPages, scrollToElement]);
 
-  function openModal(imageSrc, imageAlt) {
+  function openModal(imageSrc: string, imageAlt: string) {
     setModalSrc(imageSrc);
     setModalDesc(imageAlt);
     setModalIsOpen(true);
   }
 
-  function closeModal() {
+  function closeModal(): void {
     setModalIsOpen(false);
   }
 
@@ -102,7 +110,7 @@ export default function App() {
     <div>
       <SearchBar onSubmit={handleSearch} />
       {isLoading && <Loader />}
-      {isError && <ErrorMessage message={isError} />}
+      {isError && <ErrorMessage isError={isError} />}
       {!isLoading &&
         !isError &&
         valueTopic &&
