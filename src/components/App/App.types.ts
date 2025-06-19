@@ -3,7 +3,7 @@ export interface PhotoCollection {
   user: {
     name: string;
   };
-  description: null;
+  description: string;
   likes: number;
   urls: {
     regular: string;
