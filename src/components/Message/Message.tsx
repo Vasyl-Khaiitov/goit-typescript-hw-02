@@ -1,14 +1,14 @@
 import { JSX } from 'react';
 
 type MessageProps = {
-  message: string;
+  children: React.ReactNode;
 };
 
-export default function Message({ message }: MessageProps): JSX.Element {
+export default function Message({ children }: MessageProps): JSX.Element {
   return (
     <div>
       <p>
-        <strong>{message}</strong>
+        <strong>{children}</strong>
       </p>
     </div>
   );

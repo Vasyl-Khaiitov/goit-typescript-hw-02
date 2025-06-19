@@ -10,7 +10,3 @@ export interface PhotoCollection {
     small: string;
   };
 }
-
-export type HandleSearchProps = {
-  newTopic: string;
-};

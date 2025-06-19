@@ -7,7 +7,7 @@ import LoadMoreBtn from '../LoadMoreBtn/LoadMoreBtn';
 import Message from '../Message/Message';
 import Loader from '../Loader/Loader';
 import ImageModal from '../ImageModal/ImageModal';
-import { HandleSearchProps, PhotoCollection } from './App.types';
+import { PhotoCollection } from './App.types';
 
 export default function App() {
   const [photoCollections, setPhotoCollections] = useState<PhotoCollection[]>(
@@ -25,9 +25,7 @@ export default function App() {
 
   const itemRefs = useRef<HTMLElement[]>([]);
 
-  const handleSearch = async ({
-    newTopic,
-  }: HandleSearchProps): Promise<void> => {
+  const handleSearch = async (newTopic: string): Promise<void> => {
     setTopic(newTopic);
     setCurrentPage(1);
     setPhotoCollections([]);
@@ -36,7 +34,6 @@ export default function App() {
 
   const scrollToElement = useCallback((): void => {
     setTimeout(() => {
-      0;
       if (!itemRefs.current.length || currentPage >= totalPages) return;
 
       const firstNewIndex = itemRefs.current.length - 2;
@@ -102,6 +99,10 @@ export default function App() {
     setModalIsOpen(false);
   }
 
+  useEffect(() => {
+    itemRefs.current = [];
+  }, [photoCollections]);
+
   const valueTopic = topic.trim() !== '';
   const collectionsLength = photoCollections.length > 0;
   const lastPage = currentPage < totalPages;
@@ -114,7 +115,9 @@ export default function App() {
       {!isLoading &&
         !isError &&
         valueTopic &&
-        photoCollections.length === 0 && <Message message={message} />}
+        photoCollections.length === 0 && (
+          <Message>{message ?? 'No results found for your query.'}</Message>
+        )}
       {collectionsLength && (
         <ImageGallery
           items={photoCollections}
@@ -131,12 +134,14 @@ export default function App() {
           Thanks for watching, you have reached the end of the collection.
         </strong>
       )}
-      <ImageModal
-        modalIsOpen={modalIsOpen}
-        closeModal={closeModal}
-        modalDesc={modalDesc}
-        modalSrc={modalSrc}
-      />
+      {modalIsOpen && modalSrc && (
+        <ImageModal
+          modalIsOpen={modalIsOpen}
+          closeModal={closeModal}
+          modalDesc={modalDesc}
+          modalSrc={modalSrc}
+        />
+      )}
     </div>
   );
 }
