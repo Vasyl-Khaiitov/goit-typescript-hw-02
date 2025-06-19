@@ -61,7 +61,6 @@ export default function App() {
         setIsError(false);
         setLoading(true);
         const data = await fetchArticlesWithTopic(topic, currentPage);
-        console.log(data);
         const typeData = data as {
           total?: number;
           total_pages: number;
